@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Home() {
   const [data, setData] = useState({});
@@ -10,6 +12,12 @@ function Home() {
 
   const searchLocation = (event) => {
     if (event.key === "Enter") {
+      const trimmedLocation = location.trim();
+
+      if (trimmedLocation === "") {
+        toast.error("Please Enter A Location");
+        return;
+      }
       const params = {
         lat: data.coord ? data.coord.lat : "", 
         lon: data.coord ? data.coord.lon : "", 
@@ -20,9 +28,11 @@ function Home() {
 
       axios.get(apiUrl, { params }).then((response) => {
         setData(response.data);
+        console.log(response.data);
+      }).catch((error) => {
+        toast.error("Location Not Found");
+        setLocation("");
       });
-
-      setLocation("");
     }
   };
   return (
